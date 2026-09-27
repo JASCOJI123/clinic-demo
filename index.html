@@ -93,6 +93,22 @@
   .card.is-max .card-cta{background:var(--forest);border-color:var(--forest);color:#fff;}
   .badge{position:absolute;top:0;right:0;background:var(--gold);color:#fff;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:6px 14px;border-radius:0 0 0 14px;}
 
+  /* ---------- TANISHTIRUV (video + rasm) ---------- */
+  .intro-media{display:flex;flex-direction:column;gap:14px;}
+  .media-card{position:relative;border-radius:var(--radius);overflow:hidden;background:linear-gradient(135deg,var(--forest) 0%,var(--forest-light) 100%);aspect-ratio:16/9;}
+  .media-card.photo-card{aspect-ratio:4/3;}
+  .media-el{width:100%;height:100%;object-fit:cover;display:block;background:transparent;}
+  .media-card.is-empty .media-el{display:none;}
+  .media-empty{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#fff;text-align:center;padding:20px;}
+  .media-card.is-empty .media-empty{display:flex;}
+  .media-empty .icon-circle{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;}
+  .media-empty .icon-circle svg{width:22px;height:22px;}
+  .media-empty p{font-size:12.5px;font-weight:600;opacity:.9;max-width:26ch;line-height:1.5;}
+  .media-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.94);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 24px -6px rgba(0,0,0,.35);transition:transform .15s ease;}
+  .media-play:active{transform:translate(-50%,-50%) scale(.92);}
+  .media-play svg{width:20px;height:20px;color:var(--forest);margin-left:3px;}
+  .media-card.is-playing .media-play,.media-card.is-empty .media-play{display:none;}
+
   /* ---------- KALKULYATOR ---------- */
   .calc-card{border:1.5px solid var(--line);border-radius:var(--radius);padding:22px;}
   .calc-question{font-size:14px;font-weight:700;margin-bottom:12px;}
@@ -249,6 +265,55 @@
       <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="trust3">Og'riqsiz jarayon</span></div>
       <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="trust4">08:30 — 18:00</span></div>
     </div>
+
+    <section class="section" style="padding-bottom:0;">
+      <div class="section-head reveal">
+        <span class="section-eyebrow" data-i18n="introEyebrow">Tanishuv</span>
+        <h2 class="section-title" data-i18n="introTitle">Klinika bilan yaqindan tanishing</h2>
+        <p class="section-desc" data-i18n="introDesc">Qisqa video va klinika ichkarisidan lavhalar orqali bizni tanib oling.</p>
+      </div>
+      <!-- Haqiqiy fayllarni qo'yish uchun: assets/intro-video.mp4, assets/intro-poster.jpg, assets/clinic-photo.jpg -->
+      <div class="intro-media reveal">
+        <div class="media-card video-card" id="introVideoCard">
+          <video class="media-el" id="introVideoEl" poster="assets/intro-poster.jpg" playsinline preload="metadata" onerror="handleMediaError(this)">
+            <source src="assets/intro-video.mp4" type="video/mp4">
+          </video>
+          <div class="media-play" onclick="playIntroVideo()">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+          <div class="media-empty">
+            <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m10 8 6 4-6 4V8Z"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg></div>
+            <p data-i18n="introEmptyVideo">Tanishtiruv videosi tez orada qo'shiladi</p>
+          </div>
+        </div>
+        <div class="media-card photo-card" id="introPhotoCard">
+          <img class="media-el" src="assets/clinic-photo.jpg" alt="Demo Clinic" onerror="handleMediaError(this)">
+          <div class="media-empty">
+            <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>
+            <p data-i18n="introEmptyPhoto">Klinika suratlari tez orada qo'shiladi</p>
+          </div>
+        </div>
+      </div>
+      <script>
+        function handleMediaError(el){
+          const card = el.closest('.media-card');
+          if (card) card.classList.add('is-empty');
+        }
+        function playIntroVideo(){
+          const card = document.getElementById('introVideoCard');
+          if (!card || card.classList.contains('is-empty')) return;
+          const v = document.getElementById('introVideoEl');
+          card.classList.add('is-playing');
+          v.setAttribute('controls', '');
+          v.play().catch(()=>{});
+        }
+        (function checkIntroVideo(){
+          const v = document.getElementById('introVideoEl');
+          const src = v.querySelector('source').src;
+          fetch(src, { method: 'HEAD' }).then(r=>{ if (!r.ok) handleMediaError(v); }).catch(()=>handleMediaError(v));
+        })();
+      </script>
+    </section>
 
     <section class="section" style="padding-bottom:0;">
       <div class="section-head reveal">
@@ -729,6 +794,8 @@
       heroBtnAI:"AI yordamchi bilan gaplashish", heroBtnPackages:"Paketlarni ko'rish",
       statPriceLabel:"dan boshlanadi", statYearNumber:"1 yil", statYearLabel:"bepul konsultatsiya", statWarrantyLabel:"umrlik kafolat",
       trust1:"Umrlik kafolat", trust2:"Malakali jarrohlar", trust3:"Og'riqsiz jarayon", trust4:"08:30 — 18:00",
+      introEyebrow:"Tanishuv", introTitle:"Klinika bilan yaqindan tanishing", introDesc:"Qisqa video va klinika ichkarisidan lavhalar orqali bizni tanib oling.",
+      introEmptyVideo:"Tanishtiruv videosi tez orada qo'shiladi", introEmptyPhoto:"Klinika suratlari tez orada qo'shiladi",
       calcEyebrow:"Kalkulyator", calcTitle:"Taxminiy paketingizni bilib oling", calcDesc:"2 ta savolga javob bering — sizga mos paketni taxminiy aniqlaymiz.",
       calcQ1:"Qaysi qismda sochsizlik bor?", calcAreaForehead:"Peshona chizig'i", calcAreaCrown:"Tepa qism", calcAreaFull:"Umumiy, keng maydon",
       calcQ2:"Qanchalik jiddiy?", calcSevSmall:"Kichik", calcSevMedium:"O'rta", calcSevLarge:"Katta",
@@ -773,6 +840,8 @@
       heroBtnAI:"Написать AI-помощнику", heroBtnPackages:"Смотреть пакеты",
       statPriceLabel:"от такой цены", statYearNumber:"1 год", statYearLabel:"бесплатная консультация", statWarrantyLabel:"пожизненная гарантия",
       trust1:"Пожизненная гарантия", trust2:"Опытные хирурги", trust3:"Безболезненная процедура", trust4:"08:30 — 18:00",
+      introEyebrow:"Знакомство", introTitle:"Познакомьтесь с клиникой поближе", introDesc:"Короткое видео и кадры из клиники помогут познакомиться с нами.",
+      introEmptyVideo:"Вступительное видео скоро появится", introEmptyPhoto:"Фото клиники скоро появятся",
       calcEyebrow:"Калькулятор", calcTitle:"Узнайте свой примерный пакет", calcDesc:"Ответьте на 2 вопроса — мы примерно определим подходящий пакет.",
       calcQ1:"В какой области выпадение волос?", calcAreaForehead:"Линия лба", calcAreaCrown:"Теменная зона", calcAreaFull:"Обширная область",
       calcQ2:"Насколько выражено?", calcSevSmall:"Небольшое", calcSevMedium:"Среднее", calcSevLarge:"Сильное",
@@ -817,6 +886,8 @@
       heroBtnAI:"AI asistanla konuş", heroBtnPackages:"Paketleri görüntüle",
       statPriceLabel:"başlangıç fiyatı", statYearNumber:"1 yıl", statYearLabel:"ücretsiz konsültasyon", statWarrantyLabel:"ömür boyu garanti",
       trust1:"Ömür boyu garanti", trust2:"Uzman cerrahlar", trust3:"Ağrısız işlem", trust4:"08:30 — 18:00",
+      introEyebrow:"Tanışma", introTitle:"Kliniğimizi yakından tanıyın", introDesc:"Kısa bir video ve klinik içinden görüntülerle bizi tanıyın.",
+      introEmptyVideo:"Tanıtım videosu yakında eklenecek", introEmptyPhoto:"Klinik fotoğrafları yakında eklenecek",
       calcEyebrow:"Hesaplayıcı", calcTitle:"Yaklaşık paketinizi öğrenin", calcDesc:"2 soruyu yanıtlayın — size uygun paketi yaklaşık olarak belirleyelim.",
       calcQ1:"Saç dökülmesi hangi bölgede?", calcAreaForehead:"Alın çizgisi", calcAreaCrown:"Tepe bölgesi", calcAreaFull:"Geniş, genel alan",
       calcQ2:"Ne kadar belirgin?", calcSevSmall:"Az", calcSevMedium:"Orta", calcSevLarge:"Fazla",
@@ -861,6 +932,8 @@
       heroBtnAI:"Бо ёрдамчии AI сӯҳбат кунед", heroBtnPackages:"Пакетҳоро дидан",
       statPriceLabel:"аз ин арзиш сар мешавад", statYearNumber:"1 сол", statYearLabel:"машварати ройгон", statWarrantyLabel:"кафолати умрбод",
       trust1:"Кафолати умрбод", trust2:"Ҷарроҳони ботаҷриба", trust3:"Раванди бедард", trust4:"08:30 — 18:00",
+      introEyebrow:"Шиносоӣ", introTitle:"Бо клиника аз наздик шинос шавед", introDesc:"Тавассути видеои кӯтоҳ ва суратҳои дохили клиника моро бештар бишносед.",
+      introEmptyVideo:"Видеои муаррифӣ ба зудӣ илова мешавад", introEmptyPhoto:"Суратҳои клиника ба зудӣ илова мешаванд",
       calcEyebrow:"Ҳисобкунак", calcTitle:"Пакети тахминии худро донед", calcDesc:"Ба 2 савол ҷавоб диҳед — пакети мувофиқро тахминан муайян мекунем.",
       calcQ1:"Дар кадом қисм мӯйрезӣ ҳаст?", calcAreaForehead:"Хатти пешона", calcAreaCrown:"Қисми боло", calcAreaFull:"Масоҳати васеъ",
       calcQ2:"То чӣ андоза ҷиддист?", calcSevSmall:"Хурд", calcSevMedium:"Миёна", calcSevLarge:"Калон",
